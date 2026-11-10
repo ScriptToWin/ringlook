@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+# Portable ringlook launcher (follows symlinks)
+SOURCE="${BASH_SOURCE[0]}"
+while [[ -L "$SOURCE" ]]; do
+  DIR="$(cd -P "$(dirname "$SOURCE")" && pwd)"
+  SOURCE="$(readlink "$SOURCE")"
+  [[ $SOURCE != /* ]] && SOURCE="$DIR/$SOURCE"
+done
+DIR="$(cd -P "$(dirname "$SOURCE")" && pwd)"
+
+if command -v python3 >/dev/null 2>&1; then
+  exec python3 "$DIR/ringlook.py" "$@"
+elif command -v python >/dev/null 2>&1; then
+  exec python "$DIR/ringlook.py" "$@"
+else
+  echo "ringlook: python3 (or python) not found in PATH" >&2
+  exit 1
+fi
